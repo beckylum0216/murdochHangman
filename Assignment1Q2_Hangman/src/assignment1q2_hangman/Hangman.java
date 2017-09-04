@@ -5,10 +5,12 @@
  */
 package assignment1q2_hangman;
 
+import java.util.Random;
 import java.util.Scanner;
 
 /**
- *
+ * This class contains exclusively methods that operate or support the running
+ * of the hangman program
  * @author rebecca
  */
 public class Hangman {
@@ -18,15 +20,21 @@ public class Hangman {
     private int gameTries;
     private int gameWrong;
     private String gameSet;
-    private char tempAns;
-    private String tempTest;
+   
     Scanner theKB = new Scanner(System.in);
+    Random theRnd = new Random(); //to generate a psudorandom number
+    int rndNum;
     
+    /**
+     * the constructor takes in an input string 
+     * @param inputStr
+     */
     public Hangman(String inputStr)
     {
         this.gameStr = inputStr;
         this.gameSet = this.gameSetOps();
         this.gameTries = 0;
+        this.rndNum = theRnd.nextInt();
     }
 
     public int getGameTries() {
@@ -50,54 +58,86 @@ public class Hangman {
     {
         System.out.println("Name:               Rebecca Lim");
         System.out.println("Student Number:     33111264");
-        System.out.println("Enrolement:         Internal");
+        System.out.println("Enrolment:          Internal");
         System.out.println("Tutor:              Mark Abernethy");
         System.out.println("Tutorial:           Thursday, 10.30am");
     }
     
+    /**
+     * This method takes in a set word through the contructor, 
+     * checks it against the answer and masks the rest. 
+     */
     public void makeGuess()
     {
+        char tempAns;
+        String tempTest;
         
         do
         {
             this.getDisguisedWord();
-            System.out.println("Guess a letter:");
-            tempAns = theKB.next().charAt(0);
-            tempTest = Character.toString(tempAns);
-            
-            if(Character.isDigit(tempAns))
+            try
             {
-                System.out.println("Sorry, your guess must be an alphabet character from a to z.");
-            }
-            else
-            {
-                if((this.gameStr.contains(tempTest)))
+                System.out.println("Guess a letter:");
+                tempAns = theKB.nextLine().toLowerCase().charAt(0);
+                tempTest = Character.toString(tempAns);
+                
+                if(Character.isDigit(tempAns))
                 {
-                    if(this.gameAns.toString().contains(tempTest))
-                    {
-                        System.out.println("You have made this guess already!");
-                    }
-                    else
-                    {
-                        this.gameAns.append(tempAns);
-                        //gameRight = gameRight + 1;
-                        System.out.println("Correct. Guesses made "+ this.getGameTries() + " with " + this.getGameWrong()+ " wrong.");
-                    }
-
+                    System.out.println("Sorry, your guess must be an alphabet "
+                            + "character from a to z.");
                 }
                 else
                 {
-                    gameWrong = gameWrong + 1;
-                    System.out.println("Incorrect. Guesses made " + this.getGameTries() + " with " + this.getGameWrong()+ " wrong.");
+                    if((this.gameStr.contains(tempTest)))
+                    {
+                        if(this.gameAns.toString().contains(tempTest))
+                        {
+                            System.out.println("You have made this guess already!");
+                        }
+                        else
+                        {
+                            this.gameAns.append(tempAns);
+                            //gameRight = gameRight + 1;
+                            System.out.println("Correct. Guesses made "+ 
+                                    this.getGameTries() + " with " 
+                                    + this.getGameWrong()+ " wrong.");
+                        }
+
+                    }
+                    else
+                    {
+                        gameWrong = gameWrong + 1;
+                        System.out.println("Incorrect. Guesses made " + 
+                                this.getGameTries() + " with " 
+                                + this.getGameWrong()+ " wrong.");
+                    }
+
                 }
-                
             }
-            gameTries = gameTries + 1;
+            catch(StringIndexOutOfBoundsException exception)
+            {
+                System.out.println("You have entered an empty string. Please enter something!");
+            }
+
             
+            gameTries = gameTries + 1;
+
         }while(!(this.isFound()) );
-        System.out.println("Congratulations, you found the secret word: "+ this.getGameStr());
-    }
+        
+        System.out.println("Congratulations, you found the secret word: "
+            + this.getGameStr());
     
+        
+        
+        
+    }    
+       
+    
+    /**
+     * This method takes in a set word through the contructor 
+     * and masks each letter in the word with questions marks for the user
+     * to guess. 
+     */
     public void getDisguisedWord()
     {
         boolean found = false;
@@ -142,7 +182,8 @@ public class Hangman {
         System.out.print("> \n");
     }
     
-    
+    // Second attempt at masking the method does not 
+    /*
     public void getDisguisedWord2()
     {
         StringBuilder theMask = new StringBuilder();
@@ -165,8 +206,13 @@ public class Hangman {
         
         System.out.printf("The disguised word is <%s> \n", theMask);
     }
+    */
     
-   
+    /**
+     * This method compares the hashed answer and hashed secret word to return
+     * whether the answer has been found.
+     * @return theFlag 
+     */
     public boolean isFound()
     {
         boolean theFlag = false;
@@ -182,20 +228,33 @@ public class Hangman {
         return theFlag;
     }
     
+    /**
+     * 
+     * @param inputStr
+     * @return
+     */
     public int HashItem(String inputStr)
     {
         int hashTot = 0;
         int hash  = 0;
+        
         char str;
+        
+        
         for(int i = 0; i < inputStr.length(); i+=1)
         {
             str = inputStr.charAt(i);
-            hash =  53 * str;
+            hash =  rndNum * str;
             hashTot += hash;
         }
         return hashTot;
     }
     
+    /**
+     *  This method returns the secret word for comparison without duplicate 
+     *  characters.
+     * @return
+     */
     public String gameSetOps()
     {
         String setResults = "";
