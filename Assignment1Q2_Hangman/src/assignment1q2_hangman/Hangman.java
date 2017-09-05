@@ -22,8 +22,8 @@ public class Hangman {
     private String gameSet;
    
     Scanner theKB = new Scanner(System.in);
-    Random theRnd = new Random(); //to generate a psudorandom number
-    int rndNum;
+    private Random theRnd = new Random(); //to generate a psudorandom number
+    private int rndNum;
     
     /**
      * the constructor takes in an input string 
@@ -252,7 +252,7 @@ public class Hangman {
     
     /**
      *  This method returns the secret word for comparison without duplicate 
-     *  characters.
+     *  characters. This method would create pseudo-set capabilities for the class
      * @return
      */
     public String gameSetOps()
